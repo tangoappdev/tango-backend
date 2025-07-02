@@ -7,7 +7,9 @@ let db;
 try {
   console.log('🧪 Initializing Firebase...');
 
-  const filePath = path.resolve(__dirname, 'firebaseServiceKey.json');
+  // --- THIS IS THE ONLY LINE THAT CHANGES ---
+  // It now looks in the main project folder, which is where Render places the secret file.
+  const filePath = path.join(process.cwd(), 'firebaseServiceKey.json');
 
   if (!fs.existsSync(filePath)) {
     console.error('❌ firebaseServiceKey.json is missing!');
