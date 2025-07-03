@@ -20,7 +20,7 @@ try {
 
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    storageBucket: 'tangoapp-8bd65.appspot.com'
+    storageBucket: 'tangoapp-8bd65-storage'
   });
 
   db = admin.firestore();
