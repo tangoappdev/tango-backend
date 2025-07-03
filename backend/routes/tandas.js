@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const { Storage } = require('@google-cloud/storage');
 const path = require('path');
-const { db } = require('../firebase');
+const { db, bucket } = require('../firebase');
 const { TANDA_SEQUENCES } = require('../constants');
 
 const router = express.Router();
@@ -11,12 +11,6 @@ function normalizeAndLowercase(str) {
     if (!str || typeof str !== 'string') { return ''; }
     return str.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
-
-const storage = new Storage({
-    keyFilename: path.join(__dirname, '..', 'firebaseServiceKey.json'),
-});
-const bucketName = 'tangoapp-8bd65-storage';
-const bucket = storage.bucket(bucketName);
 
 const memoryStorage = multer.memoryStorage();
 const upload = multer({
