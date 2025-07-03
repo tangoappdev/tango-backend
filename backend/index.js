@@ -1,50 +1,42 @@
-console.log('🛠️ Starting backend...');
-
-require('dotenv').config();
+// 1. Import Dependencies
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
 
+// 2. Initialize The App
 const app = express();
 
-// --- Robust CORS Configuration (This part is correct) ---
+// 3. Configure CORS (Cross-Origin Resource Sharing)
 const allowedOrigins = ['https://tango-frontend-umber.vercel.app'];
-
 const corsOptions = {
-  origin: function (origin, callback) {
-    // On mobile, the origin can sometimes be null.
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    // and requests that are from our Vercel frontend.
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
-  },
-  optionsSuccessStatus: 200
+  }
 };
+// Use the CORS options for all routes
+app.use(cors(corsOptions));
 
-app.options('*', cors(corsOptions)); // This handles pre-flight requests
-app.use(cors(corsOptions)); // This handles all other requests
-// ------------------------------------
-
-// --- Middlewares ---
-// This line is VERY important and has been enabled.
+// 4. Configure Body Parser Middleware
+// This is needed to understand JSON data sent in requests
 app.use(express.json());
-// The extra app.use(cors()) line has been removed.
-// -----------------
 
-// --- Routes ---
-app.use('/api/tandas', require('./routes/tandas'));
+// 5. Define API Routes
+const tandaRoutes = require('./routes/tandas');
+app.use('/api/tandas', tandaRoutes);
 
+// A simple health-check route to confirm the server is running
 app.get('/', (req, res) => {
-    console.log('📥 GET / hit');
-    res.setHeader('Content-Type', 'text/plain');
-    res.status(200).send('🎉 Backend is working!');
+  res.status(200).send('Backend is alive and kicking!');
 });
-// ------------
 
-// --- Server Listen ---
-// This uses the port Render provides, and falls back to 3100 for local development.
-const port = process.env.PORT || 3100;
-
-app.listen(port, () => {
-  console.log(`🚀 Server is running on port ${port}`);
+// 6. Start The Server
+const PORT = process.env.PORT || 3100;
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running on port ${PORT}`);
 });
