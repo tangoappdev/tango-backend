@@ -5,6 +5,8 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
+
+// --- Robust CORS Configuration (This part is correct) ---
 const allowedOrigins = ['https://tango-frontend-umber.vercel.app'];
 
 const corsOptions = {
@@ -16,20 +18,20 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  optionsSuccessStatus: 200 // For legacy browser support
+  optionsSuccessStatus: 200
 };
 
-// This enables pre-flight requests for all routes
-app.options('*', cors(corsOptions));
+app.options('*', cors(corsOptions)); // This handles pre-flight requests
+app.use(cors(corsOptions)); // This handles all other requests
+// ------------------------------------
 
-// Use the cors middleware for all other requests
-app.use(cors(corsOptions));
+// --- Middlewares ---
+// This line is VERY important and has been enabled.
+app.use(express.json());
+// The extra app.use(cors()) line has been removed.
+// -----------------
 
-const port = 3100;
-
-app.use(cors());
-// app.use(express.json()); // <-- Comment out or remove this line
-
+// --- Routes ---
 app.use('/api/tandas', require('./routes/tandas'));
 
 app.get('/', (req, res) => {
@@ -37,7 +39,12 @@ app.get('/', (req, res) => {
     res.setHeader('Content-Type', 'text/plain');
     res.status(200).send('🎉 Backend is working!');
 });
+// ------------
+
+// --- Server Listen ---
+// This uses the port Render provides, and falls back to 3100 for local development.
+const port = process.env.PORT || 3100;
 
 app.listen(port, () => {
-  console.log(`🚀 Server is running on http://localhost:${port}`);
+  console.log(`🚀 Server is running on port ${port}`);
 });
