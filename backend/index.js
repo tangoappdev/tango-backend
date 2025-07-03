@@ -32,7 +32,8 @@ app.use(express.json());
 // -----------------
 
 // --- Routes ---
-// app.use('/api/tandas', require('./routes/tandas'));
+app.use('/api/tandas', require('./routes/tandas'));
+
 app.get('/', (req, res) => {
     console.log('📥 GET / hit');
     res.setHeader('Content-Type', 'text/plain');
